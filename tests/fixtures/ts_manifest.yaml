@@ -1,0 +1,13 @@
+# 합성 시계열 데이터셋 매니페스트 (P0 테스트·CLI 시연용, 실제 파일 없음)
+dataset_id: ds_example_timeseries
+name: synthetic_sensor.csv
+modality: timeseries
+source_kind: synthetic
+state: PROFILED
+version: sha256:synthetic-ts-v1
+row_count: 1064448
+columns:
+  - {name: timestamp, dtype: datetime, null_pct: 0.0}
+  - {name: device_id, dtype: categorical, null_pct: 0.0}
+  - {name: sensor_1, dtype: numeric, null_pct: 0.03}
+  - {name: sensor_2, dtype: numeric, null_pct: 0.004}

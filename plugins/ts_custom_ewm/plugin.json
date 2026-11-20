@@ -1,0 +1,55 @@
+{
+  "id": "ts.custom.ewm",
+  "version": "1.0.0",
+  "kind": "preprocessor",
+  "modality": "timeseries",
+  "tasks": [
+    "forecasting"
+  ],
+  "display_name_ko": "지수 가중 평균(EWM)",
+  "description_ko": "최근 관측에 더 큰 가중치를 주는 과거 값의 평균을 피처로 추가합니다. 현재 시점은 빼고, 같은 설비·세션 안에서만 계산합니다(사용자 정의 예제).",
+  "input_data_kind": "table.timeseries",
+  "output_data_kind": "table.timeseries",
+  "parameter_schema": {
+    "type": "object",
+    "properties": {
+      "spans": {
+        "type": "array",
+        "items": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 1000
+        },
+        "minItems": 1,
+        "maxItems": 8,
+        "uniqueItems": true,
+        "title": "가중 범위 span(칸)"
+      },
+      "columns": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "uniqueItems": true,
+        "x-column": true
+      }
+    },
+    "required": [
+      "spans"
+    ]
+  },
+  "dependencies": [
+    "pandas"
+  ],
+  "source_library": "pandas",
+  "fit_scope": "stateless",
+  "order": {
+    "stage": 40,
+    "must_follow": [
+      "ts.resample",
+      "ts.missing"
+    ]
+  },
+  "entry": "plugin.py:EwmFeature"
+}

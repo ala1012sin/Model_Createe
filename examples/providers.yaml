@@ -1,0 +1,45 @@
+# 예시 설정 — 실제 키는 파일에 쓰지 않는다.
+# 변경은 active_provider와 해당 profile의 base_url / model / auth_mode 등만.
+# 로컬 Ollama API에 dummy 키를 붙이더라도 실제 인증이 되는 것은 아니다.
+
+active_provider: external_openai
+
+profiles:
+  external_openai:
+    kind: openai
+    base_url: https://api.openai.com/v1
+    model: REPLACE_WITH_AVAILABLE_MODEL
+    auth_mode: bearer_env
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 45
+
+  local_ollama:
+    kind: openai_compatible
+    base_url: http://127.0.0.1:11434/v1
+    model: qwen3:8b
+    auth_mode: none       # 호환 SDK가 요구하는 placeholder token은 adapter 내부 처리
+    timeout_s: 90
+
+  local_vllm:
+    kind: openai_compatible
+    base_url: http://127.0.0.1:8000/v1
+    model: REPLACE_WITH_SERVED_MODEL_ID
+    auth_mode: bearer_env
+    api_key_env: LOCAL_LLM_API_KEY
+    timeout_s: 90
+
+  offline_test:
+    kind: mock
+    model: mock-recommender-v1
+    auth_mode: none
+    timeout_s: 5
+
+policy:
+  allow_external_data: false  # 외부 API는 요약 정보도 사용자 승인 필요
+  send_raw_files: false       # 항상 false로 시작
+  send_absolute_paths: false
+  send_individual_sample_rows: false
+  send_image_pixels: false
+  max_profile_chars: 12000
+  expose_tools_during_recommendation: read_only
+  require_user_approval_for_training: true

@@ -1,0 +1,47 @@
+# 시계열 실행 계획(초안) 예시 — CONTRACTS §2·§11 형식. 자동 실행용 스크립트가 아님.
+# 실제 dataset_id/컬럼/버전은 업로드·프로파일 결과에서 정한다. dataset_version은 승인 시 서버가 채운다.
+# 그룹·시간 기준 정렬은 엔진의 필수 입력 준비 규칙이라 전처리 목록에 넣지 않는다(D-11).
+schema_version: '0.2'
+dataset_id: ds_example_timeseries
+modality: timeseries
+task: forecasting
+user_goal:
+  modality: timeseries
+  task: forecasting
+  timestamp_col: timestamp
+  group_col: device_id
+  target_col: sensor_1
+  horizons: [15min, 30min]
+preprocessing:
+  - plugin_id: ts.session_split
+    plugin_version: 1.0.0
+    params: {gap: 30min}
+    reason: 측정이 끊긴 구간을 세션으로 분리
+  - plugin_id: ts.resample
+    plugin_version: 1.0.0
+    params: {frequency: 15min, aggregation: mean}
+  - plugin_id: ts.lag
+    plugin_version: 1.0.0
+    params: {lags: [1, 2, 4, 8]}
+  - plugin_id: ts.rolling
+    plugin_version: 1.0.0
+    params: {windows: [2, 4, 8], stats: [mean], shift_first: true}
+model:
+  plugin_id: timeseries.forecasting.xgboost
+  plugin_version: 1.0.0
+  params: {n_estimators: 300, max_depth: 6}
+train_budget:            # D-01: 분할 확정 후 학습 구간에만 적용
+  mode: recent_days
+  days: 30
+split_policy:
+  method: chronological
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  gap: auto
+evaluation:
+  kind: timeseries
+  metrics: [mae, rmse]
+  baseline: naive_last_value
+  per_group: true
+  per_horizon: true

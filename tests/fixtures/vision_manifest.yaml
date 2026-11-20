@@ -1,0 +1,10 @@
+# 합성 이미지 데이터셋 매니페스트 (GT 마스크 없음 → AU-PRO N/A 경고 확인용)
+dataset_id: ds_example_vision
+name: synthetic_bottle
+modality: vision
+source_kind: synthetic
+state: PROFILED
+version: sha256:synthetic-vis-v1
+image_count: 362
+split_roles: [train_normal, calibration_normal, test]
+artifacts: []

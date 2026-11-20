@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.env
+workspace/
+build/
+dist/
+
+# Local datasets, generated artifacts, and screenshots
+/outputs/
+/Claude outputs/
+
+# Local secrets and tool caches
+.env.*
+!.env.example
+*.pem
+*.key
+node_modules/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.tsbuildinfo

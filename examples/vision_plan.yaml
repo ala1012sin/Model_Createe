@@ -1,0 +1,33 @@
+# 비전 이상탐지 실행 계획(초안) 예시 — CONTRACTS §2·§11 형식.
+# GT와 분할/마스크 매핑은 실제 데이터 로더가 검증한다. dataset_version은 승인 시 서버가 채운다.
+schema_version: '0.2'
+dataset_id: ds_example_vision
+modality: vision
+task: anomaly_detection
+user_goal:
+  modality: vision
+  task: anomaly_detection
+  train_policy: normal_only
+preprocessing:
+  - plugin_id: vision.resize
+    plugin_version: 1.0.0
+    params: {height: 512, width: 512, mask_interpolation: nearest}
+model:
+  plugin_id: vision.anomaly.patchcore
+  plugin_version: 1.0.0
+  params: {backbone: wide_resnet50_2}
+train_budget:            # D-01: 보정 구간을 먼저 떼어낸 뒤 남은 정상 학습 이미지에서 선택
+  mode: n_images
+  count: 50
+  seed: 42
+split_policy:
+  method: explicit_manifest
+  train: train_normal
+  calibration: calibration_normal
+  validation: null
+  test: test
+evaluation:
+  kind: vision_anomaly
+  image_metrics: [auroc, ng_recall, normal_fpr]
+  threshold: {method: calibration_normal_max}
+  pixel_metrics: [aupro_0.05, aupro_0.30]   # 픽셀 FPR 구간 적분. GT mask 없으면 N/A
